@@ -11,9 +11,12 @@
       </div>
     </div>  
     <div class="moodStats" v-else>
-      <div class="span5"><h6 class="title clearfix span2">{{ $t("exo.MyMoodToday") }}</h6></div>
-      <div class="selectedMood span2"><span v-bind:class="selectedMoodCSSClass"></span></div>
-      <a class="uiIconRefresh uiIconLightGray" @click="noMoodToday = true"></a>
+      <div class="pull-right">
+        <div class="pull-left"><h6>{{ $t("exo.MyMoodToday") }}</h6></div>
+        <div class="pull-left" @click="noMoodToday = true">
+          <span v-bind:class="selectedMoodCSSClass"></span>
+          </div>
+      </div>  
       <select @change="updateStats()" v-model="period" class="">
         <option value="0">{{ $t("exo.lastweek") }}</option>
         <option value="1">{{ $t("exo.lastmonth") }}</option>
@@ -153,12 +156,16 @@ export default {
 .mood-app-emoticon.emoticon-flaugh {
   background-image: url('/share-mood-portlets/img/flaugh.png');
 }
-#shareMoodApp .uiIconRefresh {
-  margin-left: 249px;
+.moodStats .mood-app-emoticon {
+  color: transparent;
 }
-.selectedMood:hover {
+.moodStats .mood-app-emoticon:hover {
+  background-image: none;
+  color :#578dc9;
+}
+.moodStats span::after {
   font-family: IONIC-FONT;
   content: "\f21c";
-  color: #578dc9;
+  font-size: 30px;
 }
 </style>
