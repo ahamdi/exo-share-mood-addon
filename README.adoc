@@ -1,0 +1,17 @@
+= @@@name@@@
+// GitHub/AsciiDoc Configuration
+ifdef::env-github[]
+:note-caption: :information_source:
+:tip-caption: :bulb:
+endif::[]
+// eXo CI informations
+:ci-url: https://ci.exoplatform.org/job/addons-community/job/
+:project-branch: master
+:ci-job-name: addons-community/addon-@@@name@@@-{project-branch}-ci
+
+@@@description@@@
+
+[NOTE]
+--
+image:https://ci.exoplatform.org/buildStatus/icon?job={ci-job-name}["Build Status", link="{ci-url}{ci-job-name}/"]
+--
