@@ -1,4 +1,4 @@
-= @@@name@@@
+= Share Your Mood Addon
 // GitHub/AsciiDoc Configuration
 ifdef::env-github[]
 :note-caption: :information_source:
