@@ -34,7 +34,6 @@
   <description>Parent for Share Mood addon</description>
   <modules>
     <module>services</module>
-    <module>war</module>
     <module>portlets</module>
     <module>packaging</module>
   </modules>
