@@ -8,15 +8,6 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <!-- Extension war -->
-    <dependencySet>
-      <useProjectArtifact>false</useProjectArtifact>
-      <outputDirectory>webapps</outputDirectory>
-      <includes>
-        <include>${project.groupId}:share-mood-webapp:war</include>
-      </includes>
-      <scope>provided</scope>
-      <outputFileNameMapping>share-mood-webapp.war</outputFileNameMapping>
-    </dependencySet>
       <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>webapps</outputDirectory>
