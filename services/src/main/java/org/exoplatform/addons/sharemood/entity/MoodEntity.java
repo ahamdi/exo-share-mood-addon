@@ -9,16 +9,26 @@ import java.util.Calendar;
 @ExoEntity
 @Entity
 @Table(name = "ADDON_MOOD_ENTITY")
-@NamedQueries({@NamedQuery(
-        name = "MoodEntity.findByUsernameAndDate",
-        query = "SELECT m FROM MoodEntity m WHERE m.userName= :userName AND m.when = :when"),
-        @NamedQuery(
-                name = "MoodEntity.findByUsername",
-                query = "SELECT m FROM MoodEntity m WHERE m.userName= :userName"),
-        @NamedQuery(
-                name = "MoodEntity.findByUsernameAndMood",
-                query = "SELECT m FROM MoodEntity m WHERE m.userName= :userName AND selectedMood= :mood"
-        )})
+@NamedQueries({
+    @NamedQuery(
+      name = "MoodEntity.findByUsernameAndDate",
+      query = "SELECT m FROM MoodEntity m WHERE m.userName= :userName AND m.when = :when"),
+    @NamedQuery(
+      name = "MoodEntity.findByUsername",
+      query = "SELECT m FROM MoodEntity m WHERE m.userName= :userName  ORDER BY m.when ASC"),
+    @NamedQuery(
+      name = "MoodEntity.findByUsernameAndMood",
+      query = "SELECT m FROM MoodEntity m WHERE m.userName= :userName AND m.selectedMood= :mood ORDER BY m.when ASC"),
+    @NamedQuery(
+      name = "MoodEntity.countAllMoodsByUser",
+      query = "SELECT count(m) FROM MoodEntity m WHERE m.userName= :userName AND m.when >= :since"),
+    @NamedQuery(
+      name = "MoodEntity.findAllByUserAndSince",
+      query = "SELECT m FROM MoodEntity m WHERE m.userName= :userName AND m.when >= :since ORDER BY m.when ASC"),
+    @NamedQuery(
+      name = "MoodEntity.findByUsernameAndMoodAndSince",
+      query = "SELECT m FROM MoodEntity m WHERE m.userName= :userName AND m.selectedMood= :mood AND m.when >= :since  ORDER BY m.when ASC")
+})
 public class MoodEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -68,5 +78,5 @@ public class MoodEntity {
         this.when = when;
     }
 
-    public enum Mood {FLAUGH,SMILE,SPEECHLESS,SAD,CRYING}
+    public enum Mood {CRYING,SAD,SPEECHLESS,SMILE,FLAUGH}
 }

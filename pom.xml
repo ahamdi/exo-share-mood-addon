@@ -24,7 +24,7 @@
   <parent>
     <artifactId>addons-parent-pom</artifactId>
     <groupId>org.exoplatform.addons</groupId>
-    <version>6</version>
+    <version>10</version>
   </parent>
   <groupId>org.exoplatform.addons.sharemood</groupId>
   <artifactId>share-mood-parent</artifactId>
@@ -62,11 +62,6 @@
         <version>${platform.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.exoplatform.kernel</groupId>
-        <artifactId>exo.kernel.commons</artifactId>
-        <version>${platform.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

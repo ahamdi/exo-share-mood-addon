@@ -26,8 +26,8 @@
         <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
     </component>
     <component>
-        <key>org.exoplatform.addons.sharemood.services.ShareMooodRestService</key>
-        <type>org.exoplatform.addons.sharemood.services.ShareMooodRestService</type>
+        <key>org.exoplatform.addons.sharemood.services.ShareMoodRestService</key>
+        <type>org.exoplatform.addons.sharemood.services.ShareMoodRestService</type>
     </component>
     <component>
         <key>org.exoplatform.addons.sharemood.services.MoodDAO</key>

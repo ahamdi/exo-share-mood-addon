@@ -14,13 +14,16 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 @Path("/sharemood/")
-public class ShareMooodRestService implements ResourceContainer {
-    Log LOG = ExoLogger.getExoLogger(ShareMooodRestService.class);
+public class ShareMoodRestService implements ResourceContainer {
+  private static final String TRENDS = "trends";
+  Log LOG = ExoLogger.getExoLogger(ShareMoodRestService.class);
 
     @GET
     @Path("update")
@@ -43,12 +46,11 @@ public class ShareMooodRestService implements ResourceContainer {
     @GET
     @Path("load")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loadMoods(@QueryParam("username") String username, @QueryParam("since") String since) {
+    public Response loadMoods(@QueryParam("username") String username, @QueryParam("since") String since, @QueryParam("chartType") String chartType) {
       try {
         PortalContainer portalContainer = PortalContainer.getInstance();
         MoodService moodService = portalContainer.getComponentInstanceOfType(MoodService.class);
         Calendar sinceDate = Calendar.getInstance();
-        sinceDate.set(Calendar.WEEK_OF_YEAR, sinceDate.getWeekYear() - 1 );
         if (since != null) {
           switch (since.toLowerCase()) {
             case "lastweek":
@@ -69,14 +71,27 @@ public class ShareMooodRestService implements ResourceContainer {
               break;
           }
         }
+        long totalMoods = moodService.countAllMoodsByUser(username, sinceDate);
         JSONArray jsonArray = new JSONArray();
-        for(MoodEntity.Mood mood : MoodEntity.Mood.values()) {
-          List<MoodDTO> moods = moodService.loadMoods(username, mood, sinceDate);
-          JSONObject object = new JSONObject();
-          object.put("mood",mood);
-          object.put("count",moods.size());
-          object.put("period",since);
-          jsonArray.put(object);
+        if(TRENDS.equalsIgnoreCase(chartType)) {
+          List<MoodDTO> moods = moodService.findAllByUserAndSince(username, sinceDate);
+          SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+          for(MoodDTO mood : moods){
+            JSONObject object = new JSONObject();
+            object.put("mood", mood.getMood().name());
+            object.put("when", format.format(mood.getWhen().getTime()));
+            object.put("value", mood.getMood().ordinal());
+            jsonArray.put(object);
+          }
+        } else {
+          for (MoodEntity.Mood mood : MoodEntity.Mood.values()) {
+            List<MoodDTO> moods = moodService.loadMoods(username, mood, sinceDate);
+            JSONObject object = new JSONObject();
+            object.put("mood", mood.name());
+            object.put("count", moods.size());
+            object.put("percent", (moods.size() * 100) / totalMoods);
+            jsonArray.put(object);
+          }
         }
 
         return Response.ok(jsonArray.toString(), MediaType.APPLICATION_JSON).build();

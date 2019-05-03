@@ -5,6 +5,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ public class MoodService {
         MoodEntity moodEntity = moodDao.findByUserAndTime(userName,now);
         if(moodEntity == null) {
             moodEntity = new MoodEntity();
-            moodEntity.setWhen(Calendar.getInstance());
+            moodEntity.setWhen(now);
             moodEntity.setUserName(userName);
             moodEntity.setSelectedMood(mood);
             moodDao.create(moodEntity);
@@ -56,7 +57,20 @@ public class MoodService {
     return moods.stream().map(this::convertToDTO).collect(Collectors.toList());
   }
 
+  public List<MoodDTO> loadMoods(String userName, MoodEntity.Mood mood, Calendar since) {
+    List<MoodEntity> moods = moodDao.loadMoods(userName, mood, since);
+    return moods.stream().map(this::convertToDTO).collect(Collectors.toList());
+  }
+
   public MoodDTO find(String userName, Calendar today){
     return convertToDTO(moodDao.findByUserAndTime(userName,today));
+  }
+
+  public long countAllMoodsByUser(String userName, Calendar since) {
+      return moodDao.countMoodsByUser(userName, since);
+  }
+  public List<MoodDTO> findAllByUserAndSince(String userName, Calendar since) {
+    List<MoodEntity> moods = moodDao.findAllMoodsByUserAndSince(userName, since);
+    return moods.stream().map(this::convertToDTO).collect(Collectors.toList());
   }
 }

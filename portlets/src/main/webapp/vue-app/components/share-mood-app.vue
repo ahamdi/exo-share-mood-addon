@@ -11,24 +11,54 @@
       </div>
     </div>  
     <div class="moodStats" v-else>
+      <v-tabs>
+        <v-tab>
+          My Mood
+        </v-tab>
+        <v-tab>
+          Everyone
+        </v-tab>
+      </v-tabs>
       <div class="pull-right">
         <div class="pull-left"><h6>{{ $t("exo.MyMoodToday") }}</h6></div>
         <div class="pull-left" @click="noMoodToday = true">
           <span v-bind:class="selectedMoodCSSClass"></span>
           </div>
       </div>  
-      <select @change="updateStats()" v-model="period" class="">
-        <option value="0">{{ $t("exo.lastweek") }}</option>
-        <option value="1">{{ $t("exo.lastmonth") }}</option>
-        <option value="2">{{ $t("exo.lastthreemonths") }}</option>
-        <option value="3">{{ $t("exo.lastsixmonths") }}</option>
-      </select>
+      <div class="mood-selectors">
+        <select @change="updateStats()" v-model="chartType" class="select-mood">
+          <option value="LineChart">{{ $t("exo.trend") }}</option>
+          <option value="ColumnChart" selected>{{ $t("exo.stats") }}</option>
+        </select>
+        <select @change="updateStats()" v-model="period" class="select-mood">
+          <option value="lastweek">{{ $t("exo.lastweek") }}</option>
+          <option value="lastmonth">{{ $t("exo.lastmonth") }}</option>
+          <option value="lastquarter">{{ $t("exo.lastthreemonths") }}</option>
+          <option value="lastsimester">{{ $t("exo.lastsixmonths") }}</option>
+        </select>
+      </div>
       <GChart 
-        type="ColumnChart"
+        :type="chartType"
         :options="chartOptions"
+        :data="chartData"
         @ready="onChartReady"
       />
+      <div class="emoticons-list" v-if="chartType == 'ColumnChart'">
+        <span class="mood-app-emoticon emoticon-crying"></span>
+        <span class="mood-app-emoticon emoticon-sad"></span>
+        <span class="mood-app-emoticon emoticon-speechless"></span>
+        <span class="mood-app-emoticon emoticon-smile"></span>
+        <span class="mood-app-emoticon emoticon-flaugh"></span>
+      </div>
     </div>
+    <div  v-if="chartType == 'ColumnChart'">
+      <v-progress-linear v-for="item in data" v-bind:key="item.mood"
+        :id="item.mood"
+        :color="moodColor(item.mood)"
+        height="10px"
+        :value="item.percent">
+      </v-progress-linear>
+      </div>
   </div>
 </template>
 
@@ -39,23 +69,37 @@ import axios from 'axios';
 var showSelectMood = 'true';
 export default {
   components: {
+    GChart
   },
   props : {
   },
   data () {
     return {
       noMoodToday : true,
-      period : 0,
-      myMoodToday : ''
-    }
+      data: [],
+      period : 'lastweek',
+      myMoodToday : '',
+      chartType : 'stats',
+      chartsLib: null,
+      chartData: [],
+      progressData: [],
+      chartType: 'ColumnChart', 
+      chartOptions : {
+        chart: {
+          title: 'Mood',
+          subtitle: 'Your moods',
+          height: 170
+        }
+      }
+    } 
   },
   beforeCreate () {
     axios.get(`/rest/sharemood/loadtoday?username=`+eXo.env.portal.userName)
         .then(response => {
-          this.myMoodToday = response.data.mood
-          console.log(this.myMoodToday)
-          this.noMoodToday = this.myMoodToday == null
-          return response.data.mood == null
+          this.myMoodToday = response.data.mood;
+          console.log(this.myMoodToday) ;
+          this.noMoodToday = this.myMoodToday == null;
+          return response.data.mood == null;
         })
         .catch(function (error) {
             if (error.response) {
@@ -70,26 +114,65 @@ export default {
         },
   methods: {
     updateStats() {
-      console.log(this.period)
+      console.log(this.period);
+      var type = this.chartType.localeCompare('LineChart') == 0 ? 'trends' : 'stats';
+      axios.get(`/rest/sharemood/load?username=`+eXo.env.portal.userName+'&since='+this.period+'&chartType='+type)
+      .then(response => {
+        this.data = response.data;
+        this.chartData = new google.visualization.DataTable();
+        if(type.localeCompare('trends') == 0 ){
+          this.chartData.addColumn('date', 'Date');
+          this.chartData.addColumn('number', 'Value');
+          for (var i = 0; i < this.data.length; i++) {  
+              var parsedDate = this.data[i].when.split('-');
+              var date = new Date(parsedDate[0],parsedDate[1],parsedDate[2]);
+              var value = this.data[i].value;
+              this.chartData.addRow([date, value]);
+         }
+        } else {
+          this.chartData.addColumn('string', 'Mood');
+          this.chartData.addColumn('number', 'Percentage');
+          this.chartData.addColumn({type:'string', role:'tooltip'});
+          for (var i = 0; i < this.data.length; i++) {
+              var mood = '';
+              var percentage = this.data[i].percent;
+              this.chartData.addRow([mood, percentage, percentage + '%']);
+         }
+        }
+
+      })
+      .catch(e => {
+        //this.errors.push(e)
+        console.log(e)
+      })
     },
     onChartReady (chart, google) {
-      this.chartsLib = google;
-     axios.get(`/rest/sharemood/load?username=`+eXo.env.portal.userName)
+     this.chartsLib = google;
+      var type = this.chartType.localeCompare('LineChart') == 0 ? 'trends' : 'stats';
+      axios.get(`/rest/sharemood/load?username=`+eXo.env.portal.userName+'&since='+this.period+'&chartType='+type)
       .then(response => {
-        var data = new google.visualization.DataTable();
-          data.addColumn('string', 'Mood');
-          data.addColumn('number', 'Count');
-          var jsonData = response.data;
-          for (var i = 0; i < jsonData.length; i++) {
-            var mood = jsonData[i].mood;
-            var count = jsonData[i].count;
-            data.addRow([mood, count]);
-          }
-          const options = {
-            title: 'Mood',
-            subtitle: 'Your moods',
-          };
-          chart.draw(data,options)
+        this.data = response.data;
+        this.chartData = new google.visualization.DataTable();
+        if(type.localeCompare('trends') == 0 ){
+          this.chartData.addColumn('date', 'Date');
+          this.chartData.addColumn('number', 'Value');
+          for (var i = 0; i < this.data.length; i++) {
+              var parsedDate = this.data[i].when.split('-');
+              var date = new Date(parsedDate[0],parsedDate[1],parsedDate[2]);
+              var value = this.data[i].value;
+              this.chartData.addRow([date, value]);
+         }
+        } else {
+          this.chartData.addColumn('string', 'Mood');
+          this.chartData.addColumn('number', 'Percentage');
+          this.chartData.addColumn({type:'string', role:'tooltip'});
+          for (var i = 0; i < this.data.length; i++) {
+              var mood = '';
+              var percentage = this.data[i].percent;
+              this.chartData.addRow([mood, percentage, percentage + '%']);
+         }
+        }
+        chart.draw(this.chartData,this.chartOptions)
         })
         .catch(e => {
             //this.errors.push(e)
@@ -111,11 +194,28 @@ export default {
         vm.myMoodToday = mood
       };
       xhr.send();
+    },
+    moodColor: function(mood) {
+      if(mood.localeCompare('CRYING') == 0) return 'red';
+      if(mood.localeCompare('SAD') == 0 ) return 'orange';
+      if(mood.localeCompare('SPEECHLESS') == 0 ) return 'yellow';
+      if(mood.localeCompare('SMILE') == 0 ) return 'green';
+      if(mood.localeCompare('FLAUGH') == 0 ) return 'blue';
     }
   },
   computed: {
     selectedMoodCSSClass : function() {
-      return `mood-app-emoticon emoticon-${this.myMoodToday.toLowerCase()}`;
+      return `mood-app-emoticon onhover emoticon-${this.myMoodToday.toLowerCase()}`;
+    },
+    chartOptions () {
+      if (!this.chartsLib) return null
+      return this.chartsLib.charts.Bar.convertOptions({
+        chart: {
+          title: 'Mood',
+          subtitle: 'Your moods',
+          height: 170
+        }
+      })
     }
   }
 };
@@ -137,7 +237,7 @@ export default {
     top: 7px;
     width: 24px;
     height: 24px;
-    margin: 5px 5px 0;
+    margin: 3px;
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -159,13 +259,28 @@ export default {
 .moodStats .mood-app-emoticon {
   color: transparent;
 }
-.moodStats .mood-app-emoticon:hover {
+.moodStats .onhover:hover {
   background-image: none;
-  color :#578dc9;
+  color :white;
+  background-color: #578dc9;
+  width: 20px;
+  height: 20px;
 }
 .moodStats span::after {
   font-family: IONIC-FONT;
   content: "\f21c";
   font-size: 30px;
+}
+.emoticons-list {
+  width: 167px;
+  margin: auto;
+  padding: 0;
+}
+.mood-selectors {
+  display: inline-flex;
+}
+.select-mood {
+  width: 45%;
+  margin: 10px;
 }
 </style>

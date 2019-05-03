@@ -6,7 +6,7 @@ const webpackCommonConfig = require('./webpack.common.js');
 const app = 'share-mood-portlets';
 
 // add the server path to your server location path
-const exoServerPath = "/home/ali/work/binaries/5.1/platform-5.1.0";
+const exoServerPath = "/home/ali/work/binaries/5.3/platform-5.3.0-M04";
 
 let config = merge(webpackCommonConfig, {
   output: {

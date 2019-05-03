@@ -25,12 +25,25 @@
     <depends>
       <module>eXoVueI18n</module>
     </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
   </module>
   <module>
     <name>vueGoogleCharts</name>
     <script>
       <minify>false</minify>
       <path>/js/lib/google-charts/vue-google-charts.browser.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+  </module>
+  <module>
+    <name>vuetify</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/lib/vuetify-v1.5.13/vuetify-v1.5.13.js</path>
     </script>
     <depends>
       <module>vue</module>

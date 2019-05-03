@@ -3,6 +3,8 @@
     "exo.lastweek":"Last week",
     "exo.lastmonth":"Last month",
     "exo.lastthreemonths":"Last 3 months",
-    "exo.lastsixmonths":"Last six months"
-  
+    "exo.lastsixmonths":"Last six months",
+    "exo.MyMoodToday":"Mon humeur aujourd'hui : " ,
+    "exo.trend": "Trends",
+    "exo.stats": "Stats"
 }
