@@ -20,7 +20,7 @@ import java.util.Calendar;
       name = "MoodEntity.findByUsernameAndMood",
       query = "SELECT m FROM MoodEntity m WHERE m.userName= :userName AND m.selectedMood= :mood ORDER BY m.when ASC"),
     @NamedQuery(
-      name = "MoodEntity.countAllMoodsByUser",
+      name = "MoodEntity.countAllMoodsByUserAndSince",
       query = "SELECT count(m) FROM MoodEntity m WHERE m.userName= :userName AND m.when >= :since"),
     @NamedQuery(
       name = "MoodEntity.findAllByUserAndSince",

@@ -1,6 +1,7 @@
 package org.exoplatform.addons.sharemood.services;
 
 import org.exoplatform.addons.sharemood.entity.MoodEntity;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -32,8 +33,7 @@ public class ShareMoodRestService implements ResourceContainer {
     public Response updateMood(@QueryParam("mood") String mood) {
       try {
         String loggedInUser = ConversationState.getCurrent().getIdentity().getUserId();
-        PortalContainer portalContainer = PortalContainer.getInstance();
-        MoodService moodService = portalContainer.getComponentInstanceOfType(MoodService.class);
+        MoodService moodService = CommonsUtils.getService(MoodService.class);
         MoodDTO moodDTO = moodService.saveMood(MoodEntity.Mood.valueOf(mood.toUpperCase()), loggedInUser);
         //LOG.info("Mood Updated to " + moodDTO.getMood() + " for user " + moodDTO.getUsername());
         return Response.ok("Mood Updated to " + moodDTO.getMood() + " for user " + moodDTO.getUsername()
@@ -48,8 +48,7 @@ public class ShareMoodRestService implements ResourceContainer {
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadMoods(@QueryParam("username") String username, @QueryParam("since") String since, @QueryParam("chartType") String chartType) {
       try {
-        PortalContainer portalContainer = PortalContainer.getInstance();
-        MoodService moodService = portalContainer.getComponentInstanceOfType(MoodService.class);
+        MoodService moodService = CommonsUtils.getService(MoodService.class);
         Calendar sinceDate = Calendar.getInstance();
         if (since != null) {
           switch (since.toLowerCase()) {
@@ -105,8 +104,7 @@ public class ShareMoodRestService implements ResourceContainer {
   @Path("loadtoday")
   @Produces(MediaType.APPLICATION_JSON)
   public Response loadMoodOfToday(@QueryParam("username") String username) {
-    PortalContainer portalContainer = PortalContainer.getInstance();
-    MoodService moodService = portalContainer.getComponentInstanceOfType(MoodService.class);
+    MoodService moodService = CommonsUtils.getService(MoodService.class);
     MoodDTO moodOfToday = moodService.find(username, Calendar.getInstance());
     JSONObject object = new JSONObject();
     try {

@@ -27,8 +27,8 @@
               <goal>install-node-and-npm</goal>
             </goals>
             <configuration>
-              <nodeVersion>v10.4.1</nodeVersion>
-              <npmVersion>6.1.0</npmVersion>
+              <nodeVersion>v10.15.3</nodeVersion>
+              <npmVersion>6.4.1</npmVersion>
             </configuration>
             </execution>
             <execution>
@@ -60,6 +60,13 @@
             </execution>
           </executions>
       </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+                <packagingExcludes>**/*.less,**/*.vue,css/lib/*,vue-app/**,js/mock/**/*,**-dev.*</packagingExcludes>
+            </configuration>
+        </plugin>
     </plugins>
 	</build>
 	<dependencies>

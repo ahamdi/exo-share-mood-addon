@@ -36,7 +36,7 @@ public class MoodDAO extends GenericDAOJPAImpl<MoodEntity, Long> {
                 .setParameter("mood",mood).getResultList();
     }
     public Long countMoodsByUser (String userName, Calendar since) {
-      return getEntityManager().createNamedQuery("MoodEntity.countAllMoodsByUser", Long.class)
+      return getEntityManager().createNamedQuery("MoodEntity.countAllMoodsByUserAndSince", Long.class)
           .setParameter("userName", userName)
           .setParameter("since", since)
           .getSingleResult();

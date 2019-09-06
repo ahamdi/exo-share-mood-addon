@@ -12,13 +12,13 @@
     </div>  
     <div class="moodStats" v-else>
       <v-tabs>
-        <v-tab>
+        <v-tab :key="myMoodTab">
           My Mood
         </v-tab>
-        <v-tab>
+        <v-tab :key="everyoneMoodTab">
           Everyone
         </v-tab>
-      </v-tabs>
+      <v-tab-item :key="myMoodTab">
       <div class="pull-right">
         <div class="pull-left"><h6>{{ $t("exo.MyMoodToday") }}</h6></div>
         <div class="pull-left" @click="noMoodToday = true">
@@ -50,15 +50,12 @@
         <span class="mood-app-emoticon emoticon-smile"></span>
         <span class="mood-app-emoticon emoticon-flaugh"></span>
       </div>
+      </v-tab-item>
+      <v-tab-item :key="everyoneMoodTab">
+        Test
+      </v-tab-item>
+            </v-tabs>
     </div>
-    <div  v-if="chartType == 'ColumnChart'">
-      <v-progress-linear v-for="item in data" v-bind:key="item.mood"
-        :id="item.mood"
-        :color="moodColor(item.mood)"
-        height="10px"
-        :value="item.percent">
-      </v-progress-linear>
-      </div>
   </div>
 </template>
 
@@ -261,8 +258,8 @@ export default {
 }
 .moodStats .onhover:hover {
   background-image: none;
-  color :white;
-  background-color: #578dc9;
+  color :#578dc9;
+  background-color: #FFFFFF;
   width: 20px;
   height: 20px;
 }
