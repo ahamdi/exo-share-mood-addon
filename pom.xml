@@ -46,7 +46,7 @@
     <!-- **************************************** -->
     <!-- Dependencies versions                    -->
     <!-- **************************************** -->
-    <platform.version>5.2.0-M05</platform.version>
+    <platform.version>5.2.0</platform.version>
     <!-- Juzu Version -->
     <juzu.version>1.2.0</juzu.version>
     <!-- for tests -->
